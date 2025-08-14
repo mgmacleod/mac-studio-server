@@ -6,8 +6,7 @@
     <string>com.ollama.service</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/bin/ollama</string>
-        <string>serve</string>
+        <string>/Users/<OLLAMA_USER>/mac-studio-server/scripts/ollama-wrapper.sh</string>
     </array>
     <key>EnvironmentVariables</key>
     <dict>
@@ -16,21 +15,9 @@
         <string>/Users/<OLLAMA_USER></string>
         <key>PATH</key>
         <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-        <!-- Ollama Configuration -->
-        <key>OLLAMA_HOST</key>
-        <string>0.0.0.0:11434</string>
+        <!-- Ollama Models Path -->
         <key>OLLAMA_MODELS</key>
         <string>/Users/<OLLAMA_USER>/.ollama/models</string>
-        <key>OLLAMA_NUM_PARALLEL</key>
-        <string>8</string>
-        <key>OLLAMA_KEEP_ALIVE</key>
-        <string>30m</string>
-        <key>OLLAMA_FLASH_ATTENTION</key>
-        <string>true</string>
-        <key>OLLAMA_MAX_LOADED_MODELS</key>
-        <string>4</string>
-        <key>OLLAMA_NOPRUNE</key>
-        <string>true</string>
     </dict>
     <key>RunAtLoad</key>
     <true/>
