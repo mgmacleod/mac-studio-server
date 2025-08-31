@@ -32,8 +32,12 @@ if [ $? -ne 0 ] || [ -z "$LATEST_RELEASE_JSON" ]; then
 fi
 
 # Extract latest version and download URL
-LATEST_VERSION=$(echo "$LATEST_RELEASE_JSON" | grep '"tag_name"' | sed 's/.*"tag_name": "v\?\([^"]*\)".*/\1/')
-DOWNLOAD_URL=$(echo "$LATEST_RELEASE_JSON" | grep '"browser_download_url".*Ollama-darwin\.zip' | sed 's/.*"browser_download_url": "\([^"]*\)".*/\1/')
+LATEST_VERSION=$(echo "$LATEST_RELEASE_JSON" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": "\([^"]*\)".*/\1/')
+DOWNLOAD_URL=$(echo "$LATEST_RELEASE_JSON" | grep '"browser_download_url".*Ollama-darwin\.zip' | head -1 | sed 's/.*"browser_download_url": "\([^"]*\)".*/\1/')
+
+# Normalize versions by removing 'v' prefix for comparison
+CURRENT_VERSION_NORMALIZED=$(echo "$CURRENT_VERSION" | sed 's/^v//')
+LATEST_VERSION_NORMALIZED=$(echo "$LATEST_VERSION" | sed 's/^v//')
 
 if [ -z "$LATEST_VERSION" ] || [ -z "$DOWNLOAD_URL" ]; then
     log_action "ERROR: Could not extract version or download URL from GitHub response"
@@ -43,7 +47,7 @@ fi
 log_action "Latest Ollama version available: $LATEST_VERSION"
 
 # Compare versions (skip update if already latest)
-if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
+if [ "$CURRENT_VERSION_NORMALIZED" = "$LATEST_VERSION_NORMALIZED" ]; then
     log_action "Ollama is already up to date (version $CURRENT_VERSION)"
     exit 0
 fi
@@ -125,12 +129,13 @@ fi
 
 # Verify installation
 NEW_VERSION=$(ollama --version 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "unknown")
-if [ "$NEW_VERSION" = "$LATEST_VERSION" ]; then
+NEW_VERSION_NORMALIZED=$(echo "$NEW_VERSION" | sed 's/^v//')
+if [ "$NEW_VERSION_NORMALIZED" = "$LATEST_VERSION_NORMALIZED" ]; then
     log_action "Successfully updated Ollama to version $NEW_VERSION"
     # Clean up old backup after successful installation
     sudo rm -rf /Applications/Ollama.app.backup.*
 else
-    log_action "WARNING: Installation may have failed. Expected version $LATEST_VERSION, but got $NEW_VERSION"
+    log_action "WARNING: Installation may have failed. Expected version $LATEST_VERSION_NORMALIZED, but got $NEW_VERSION"
 fi
 
 # Clean up temporary files
