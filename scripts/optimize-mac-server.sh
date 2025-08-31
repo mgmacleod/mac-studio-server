@@ -10,12 +10,12 @@ log_action() {
 }
 
 # Disable Spotlight indexing
-log_action "Disabling Spotlight indexing..."
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
+# log_action "Disabling Spotlight indexing..."
+# sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 
 # Disable Time Machine
-log_action "Disabling Time Machine..."
-sudo tmutil disable
+# log_action "Disabling Time Machine..."
+# sudo tmutil disable
 
 # Disable sleep
 log_action "Configuring power settings..."
@@ -28,9 +28,9 @@ log_action "Configuring display settings..."
 defaults write com.apple.screensaver idleTime 0
 
 # Disable automatic updates
-log_action "Disabling automatic updates..."
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
-sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+# log_action "Disabling automatic updates..."
+# sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
+# sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
 
 # Disable power nap
 log_action "Disabling power nap..."
@@ -41,9 +41,9 @@ log_action "Disabling sudden motion sensor..."
 sudo pmset -a sms 0
 
 # Keep Screen Sharing enabled but disable other sharing services
-log_action "Configuring sharing services..."
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.AppleFileServer.plist 2>/dev/null || true
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.smbd.plist 2>/dev/null || true
+# log_action "Configuring sharing services..."
+# sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.AppleFileServer.plist 2>/dev/null || true
+# sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.smbd.plist 2>/dev/null || true
 
 # Disable Handoff
 log_action "Disabling Handoff..."
