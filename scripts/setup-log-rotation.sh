@@ -34,26 +34,26 @@ else
 fi
 
 # Create a manual rotation script for testing/emergency use
-log_action "Creating manual log rotation script..."
-cat > "$BASE_DIR/scripts/rotate-logs-now.sh" << 'EOF'
-#!/bin/bash
+# log_action "Creating manual log rotation script..."
+# cat > "$BASE_DIR/scripts/rotate-logs-now.sh" << 'EOF'
+# #!/bin/bash
 
-# Manual log rotation script
-USER=${OLLAMA_USER:-$(whoami)}
-BASE_DIR=${OLLAMA_BASE_DIR:-"/Users/$USER/mac-studio-server"}
-LOG_FILE="$BASE_DIR/logs/log-rotation.log"
+# # Manual log rotation script
+# USER=${OLLAMA_USER:-$(whoami)}
+# BASE_DIR=${OLLAMA_BASE_DIR:-"/Users/$USER/mac-studio-server"}
+# LOG_FILE="$BASE_DIR/logs/log-rotation.log"
 
-log_action() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
-}
+# log_action() {
+#     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+# }
 
-log_action "Manual log rotation initiated..."
+# log_action "Manual log rotation initiated..."
 
-# Force rotation using our config
-sudo newsyslog -f /etc/newsyslog.d/ollama.conf
+# # Force rotation using our config
+# sudo newsyslog -f /etc/newsyslog.d/ollama.conf
 
-log_action "Manual log rotation completed"
-EOF
+# log_action "Manual log rotation completed"
+# EOF
 
 chmod +x "$BASE_DIR/scripts/rotate-logs-now.sh"
 
