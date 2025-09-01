@@ -13,7 +13,7 @@ log_action "Updating Ollama..."
 
 # Stop the service
 log_action "Stopping Ollama..."
-sudo launchctl stop com.ollama.wrapped.service
+sudo launchctl unload /Library/LaunchDaemons/com.ollama.wrapped.service.plist
 
 # Update the service
 log_action "Checking for Ollama updates..."
@@ -144,6 +144,6 @@ log_action "Cleanup completed"
 
 # Start the service
 log_action "Starting Ollama..."
-sudo launchctl start com.ollama.wrapped.service
+sudo launchctl load -w /Library/LaunchDaemons/com.ollama.wrapped.service.plist
 
 log_action "Ollama updated"
