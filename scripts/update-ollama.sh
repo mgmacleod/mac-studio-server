@@ -3,16 +3,16 @@
 # Configuration
 USER=${OLLAMA_USER:-$(whoami)}
 BASE_DIR=${OLLAMA_BASE_DIR:-"/Users/$USER/mac-studio-server"}
-LOG_FILE="$BASE_DIR/logs/update-ollama-wrapped-service.log"
+LOG_FILE="$BASE_DIR/logs/update-ollama.log"
 
 log_action() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log_action "Updating Ollama wrapped service..."
+log_action "Updating Ollama..."
 
 # Stop the service
-log_action "Stopping Ollama wrapped service..."
+log_action "Stopping Ollama..."
 sudo launchctl stop com.ollama.wrapped.service
 
 # Update the service
@@ -143,7 +143,7 @@ rm -rf "$TEMP_DIR"
 log_action "Cleanup completed"
 
 # Start the service
-log_action "Starting Ollama wrapped service..."
+log_action "Starting Ollama..."
 sudo launchctl start com.ollama.wrapped.service
 
-log_action "Ollama wrapped service updated"
+log_action "Ollama updated"
