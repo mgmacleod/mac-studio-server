@@ -114,4 +114,36 @@ else
     log_action "Skipping Docker autostart (set DOCKER_AUTOSTART=true to enable)"
 fi
 
-log_action "Installation completed" 
+# Install log rotation
+log_action "Setting up log rotation..."
+"$BASE_DIR/scripts/setup-log-rotation.sh"
+
+# Install automated log rotation daemon
+log_action "Installing automated log rotation..."
+sed "s|<OLLAMA_USER>|$USER|g" "$BASE_DIR/config/com.ollama.logrotation.plist" > "/tmp/com.ollama.logrotation.plist"
+sudo cp "/tmp/com.ollama.logrotation.plist" /Library/LaunchDaemons/
+rm "/tmp/com.ollama.logrotation.plist"
+
+sudo chown root:wheel /Library/LaunchDaemons/com.ollama.logrotation.plist
+sudo chmod 644 /Library/LaunchDaemons/com.ollama.logrotation.plist
+
+# Load the log rotation daemon
+log_action "Loading log rotation service..."
+sudo launchctl unload /Library/LaunchDaemons/com.ollama.logrotation.plist 2>/dev/null || true
+sudo launchctl load -w /Library/LaunchDaemons/com.ollama.logrotation.plist
+
+log_action "Installation completed"
+log_action ""
+log_action "Services summary:"
+log_action "✓ Ollama service: Running on port 11434"
+log_action "✓ Log rotation: Daily at 3:00 AM"
+
+if [ -n "$GPU_PERCENT" ]; then
+    log_action "✓ GPU memory optimization: ${GPU_PERCENT}%"
+fi
+if [ "${DOCKER_AUTOSTART:-false}" = "true" ]; then
+    log_action "✓ Docker autostart: Enabled with Colima"
+fi
+log_action ""
+log_action "Logs location: $BASE_DIR/logs/"
+log_action "Manual log rotation: ./scripts/rotate-logs-now.sh" 

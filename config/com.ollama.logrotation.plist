@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.ollama.logrotation</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/<OLLAMA_USER>/mac-studio-server/scripts/rotate-ollama-logs.sh</string>
+    </array>
+    <!-- Run daily at 3:00 AM -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardErrorPath</key>
+    <string>/Users/<OLLAMA_USER>/mac-studio-server/logs/log-rotation.err</string>
+    <key>StandardOutPath</key>
+    <string>/Users/<OLLAMA_USER>/mac-studio-server/logs/log-rotation.log</string>
+</dict>
+</plist>

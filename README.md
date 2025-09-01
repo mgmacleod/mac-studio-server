@@ -12,6 +12,7 @@ This configuration is optimized for running Mac Studio as a dedicated Ollama ser
 
 ## Latest Updates
 
+- **[v1.3.0]** Added intelligent log rotation with automatic compression and daily scheduling (3am)
 - **[v1.2.0]** Added Docker autostart support for container applications (with [Colima](https://github.com/abiosoft/colima))
 - **[v1.1.0]** Added GPU Memory Optimization - configure Metal to use more RAM for models
 - **[v1.0.0]** Initial release with system optimizations and Ollama configuration
@@ -24,7 +25,7 @@ See the [CHANGELOG](CHANGELOG.md) for detailed version history.
 - Optimized for Apple Silicon
 - System resource optimization through service disabling
 - External network access
-- Proper logging setup
+- Proper logging setup with automatic rotation
 - SSH-based remote management
 - Docker autostart for container applications
 
@@ -126,6 +127,69 @@ Log files are stored in the `logs` directory:
 - `ollama.err` - Ollama error logs
 - `install.log` - Installation logs
 - `optimization.log` - System optimization logs
+
+## Log Rotation
+
+The system includes automatic log rotation to prevent disk space issues while maintaining good log history. Log rotation is configured to run **daily at 3:00 AM** to minimize service disruption.
+
+### Automatic Rotation
+
+- **Schedule**: Daily at 3:00 AM
+- **Main logs** (`ollama.log`, `ollama.err`): Rotate when >5MB, keep 10 copies
+- **Other logs**: Rotate when >1MB, keep 5 copies  
+- **Compression**: All rotated logs are compressed with bzip2 (~92% size reduction)
+- **Service restart**: Ollama briefly restarts (~30 seconds) to switch to new log files
+
+### Log File Structure
+
+After rotation, your logs directory will look like:
+```
+logs/
+├── ollama.log              # Current log
+├── ollama.log.0.bz2        # Yesterday's log (compressed)
+├── ollama.log.1.bz2        # 2 days ago (compressed)
+├── ollama.err              # Current error log
+├── ollama.err.0.bz2        # Yesterday's errors (compressed)
+└── log-rotation.log        # Rotation activity log
+```
+
+### Manual Log Rotation
+
+Force immediate log rotation when needed:
+```bash
+# Manual rotation (includes service restart)
+./scripts/rotate-logs-now.sh
+
+# Check rotation status
+tail -f logs/log-rotation.log
+
+# View compressed logs
+bzcat logs/ollama.log.0.bz2 | tail -20
+```
+
+### Configuration
+
+The log rotation system uses:
+- **Smart rotation script**: `scripts/rotate-ollama-logs.sh`
+- **Automated scheduling**: via launchd (`com.ollama.logrotation`)
+- **Size-based rotation**: Prevents runaway log growth
+- **Retention policy**: Automatically removes old logs beyond limits
+
+### Troubleshooting Log Rotation
+
+Check if log rotation is working:
+```bash
+# Verify rotation service is loaded
+sudo launchctl list | grep logrotation
+
+# Check rotation logs
+cat logs/log-rotation.log
+
+# Test rotation manually
+./scripts/rotate-ollama-logs.sh force
+```
+
+The rotation system ensures your Ollama server can run indefinitely without manual log maintenance while preserving important historical data.
 
 ## Performance Considerations
 
@@ -233,7 +297,7 @@ This project follows [Semantic Versioning](https://semver.org/):
 - MINOR version for new features
 - PATCH version for bug fixes
 
-The current version is *1.2.0*.
+The current version is *1.3.0*.
 
 ## Contributing
 
