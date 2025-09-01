@@ -28,6 +28,7 @@ See the [CHANGELOG](CHANGELOG.md) for detailed version history.
 - Proper logging setup with automatic rotation
 - SSH-based remote management
 - Docker autostart for container applications
+- Automated Ollama updates with safety features
 
 ## Requirements
 
@@ -71,6 +72,88 @@ export DOCKER_AUTOSTART="true"  # Optional: Enable automatic Docker startup
 chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
+
+## Updating Ollama
+
+The project includes an automated update script that downloads and installs the latest version of Ollama directly from the official GitHub releases.
+
+### Automatic Updates
+
+To update Ollama to the latest version:
+
+```bash
+# Run the update script (requires sudo for application installation)
+sudo ./scripts/ollama-update.sh
+```
+
+### What the Update Script Does
+
+The update process is designed to be safe and reliable:
+
+1. **Version Check**: Compares your current Ollama version with the latest available on GitHub
+2. **Smart Updates**: Skips update if you're already running the latest version
+3. **Service Management**: Temporarily stops the Ollama service during update
+4. **Backup Creation**: Automatically backs up your current installation before updating
+5. **Secure Download**: Downloads the latest macOS release directly from GitHub
+6. **Verification**: Validates the download and verifies successful installation
+7. **Rollback Protection**: Automatically restores backup if installation fails
+8. **Service Restart**: Restarts the Ollama service after successful update
+
+### Update Process Output
+
+The script provides detailed logging throughout the process:
+
+```bash
+[2025-08-31 12:11:54] Stopping Ollama wrapped service...
+[2025-08-31 12:11:54] Current Ollama version: 0.11.8
+[2025-08-31 12:11:54] Latest Ollama version available: v0.11.9
+[2025-08-31 12:11:54] Downloading Ollama v0.11.9...
+[2025-08-31 12:11:57] Creating backup of current installation...
+[2025-08-31 12:11:58] Installing Ollama v0.11.9...
+[2025-08-31 12:11:59] Successfully updated Ollama to version 0.11.9
+[2025-08-31 12:11:59] Starting Ollama wrapped service...
+```
+
+### Safety Features
+
+- **Automatic Backup**: Current installation is backed up before any changes
+- **Rollback on Failure**: If installation fails, the backup is automatically restored
+- **Version Verification**: Confirms the new version is correctly installed
+- **Error Handling**: Comprehensive error checking with detailed logging
+- **Minimal Downtime**: Service is only stopped during the actual installation
+
+### Logs
+
+Update activities are logged to:
+- `logs/update-ollama-wrapped-service.log` - Update process logs
+- `logs/ollama.log` - Service restart logs
+
+### Troubleshooting Updates
+
+If an update fails:
+
+1. **Check the logs**:
+   ```bash
+   tail -f logs/update-ollama-wrapped-service.log
+   ```
+
+2. **Verify service status**:
+   ```bash
+   sudo launchctl list | grep ollama
+   ```
+
+3. **Manual service restart** (if needed):
+   ```bash
+   sudo launchctl stop com.ollama.wrapped.service
+   sudo launchctl start com.ollama.wrapped.service
+   ```
+
+4. **Check current version**:
+   ```bash
+   ollama --version
+   ```
+
+The update script is designed to handle edge cases gracefully and maintain system stability throughout the update process.
 
 ## Configuration
 
