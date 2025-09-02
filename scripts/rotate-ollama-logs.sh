@@ -50,25 +50,22 @@ rotate_log_file() {
     log_action "Rotating $logfile..."
     
     # Remove the oldest log if it exists
-    if [ -f "${logfile}.${max_copies}.bz2" ]; then
-        rm -f "${logfile}.${max_copies}.bz2"
-        log_action "Removed oldest log: ${logfile}.${max_copies}.bz2"
+    if [ -f "${logfile}.${max_copies}" ]; then
+        rm -f "${logfile}.${max_copies}"
+        log_action "Removed oldest log: ${logfile}.${max_copies}"
     fi
     
     # Shift all existing logs
     for i in $(seq $((max_copies - 1)) -1 1); do
-        if [ -f "${logfile}.${i}.bz2" ]; then
-            mv "${logfile}.${i}.bz2" "${logfile}.$((i + 1)).bz2"
+        if [ -f "${logfile}.${i}" ]; then
+            mv "${logfile}.${i}" "${logfile}.$((i + 1))"
         fi
     done
     
-    # Move current log to .0 and compress
+    # Move current log to .0
     if [ -f "$logfile" ]; then
         mv "$logfile" "${logfile}.0"
-        # Remove existing .0.bz2 if it exists to avoid bzip2 error
-        [ -f "${logfile}.0.bz2" ] && rm -f "${logfile}.0.bz2"
-        bzip2 "${logfile}.0"
-        log_action "Compressed ${logfile}.0 to ${logfile}.0.bz2"
+        log_action "Rotated $logfile to ${logfile}.0"
     fi
     
     # Create new empty log file with proper permissions

@@ -220,7 +220,6 @@ The system includes automatic log rotation to prevent disk space issues while ma
 - **Schedule**: Daily at 3:00 AM
 - **Main logs** (`ollama.log`, `ollama.err`): Rotate when >5MB, keep 10 copies
 - **Other logs**: Rotate when >1MB, keep 5 copies  
-- **Compression**: All rotated logs are compressed with bzip2 (~92% size reduction)
 - **Service restart**: Ollama briefly restarts (~30 seconds) to switch to new log files
 
 ### Log File Structure
@@ -229,10 +228,10 @@ After rotation, your logs directory will look like:
 ```
 logs/
 ├── ollama.log              # Current log
-├── ollama.log.0.bz2        # Yesterday's log (compressed)
-├── ollama.log.1.bz2        # 2 days ago (compressed)
+├── ollama.log.0            # Yesterday's log
+├── ollama.log.1            # 2 days ago
 ├── ollama.err              # Current error log
-├── ollama.err.0.bz2        # Yesterday's errors (compressed)
+├── ollama.err.0            # Yesterday's errors
 └── log-rotation.log        # Rotation activity log
 ```
 
@@ -246,8 +245,8 @@ Force immediate log rotation when needed:
 # Check rotation status
 tail -f logs/log-rotation.log
 
-# View compressed logs
-bzcat logs/ollama.log.0.bz2 | tail -20
+# View rotated logs
+tail -20 logs/ollama.log.0
 ```
 
 ### Configuration
@@ -257,6 +256,7 @@ The log rotation system uses:
 - **Automated scheduling**: via launchd (`com.ollama.logrotation`)
 - **Size-based rotation**: Prevents runaway log growth
 - **Retention policy**: Automatically removes old logs beyond limits
+- **Simple storage**: Rotated logs stored as plain text files for easy access
 
 ### Troubleshooting Log Rotation
 
